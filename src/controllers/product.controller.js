@@ -1,4 +1,4 @@
-import { countProducts, createProduct, getAllProducts, getProductById } from "../models/product.model.js";
+import { countProducts, createProduct, getAllProducts, getProductById, getProductsByIds } from "../models/product.model.js";
 
 export async function handleCreateProduct(req, res) {
   try {
@@ -66,3 +66,19 @@ export async function handleListProducts(req, res) {
     res.status(500).json({ error: "Error interno del servidor" });
   }
 }
+export async function handleBulkProductRequest(req, res) {
+  try {
+    const { ids } = req.body;
+
+    if (!Array.isArray(ids) || ids.length === 0) {
+      return res.status(400).json({ error: 'Se requiere un arreglo de IDs' });
+    }
+
+    const products = await getProductsByIds(ids);
+    res.json(products);
+  } catch (err) {
+    console.error('Error al obtener productos por IDs:', err);
+    res.status(500).json({ error: 'Error interno del servidor' });
+  }
+}
+
